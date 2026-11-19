@@ -126,15 +126,15 @@ class MainActivity : AppCompatActivity() {
             classify(bmp) { labels ->
                 val top = labels.maxBy { it.confidence }
                 val sb = StringBuilder()
-                sb.append(String.format(Locale.US, "Phone: %s (%.4f)", top.text.uppercase(Locale.ROOT), top.confidence))
+                sb.append(String.format(Locale.US, "Phone: %s (%.4f)", top.text.trim().uppercase(Locale.ROOT), top.confidence))
                 if (t != null) {
-                    sb.append("  ").append(mark(top.text == t.trueLabel))
+                    sb.append("  ").append(mark(top.text.trim() == t.trueLabel))
                     sb.append(String.format(Locale.US, "\nNotebook: %s (%.4f)", t.nbPred, t.nbConf))
                     sb.append("\nTrue label: ").append(t.trueLabel)
                 }
                 sb.append("\n\nProbabilities:\n")
                 for (label in labels) {
-                    sb.append(String.format(Locale.US, "%s : %.4f\n", label.text, label.confidence))
+                    sb.append(String.format(Locale.US, "%s : %.4f\n", label.text.trim(), label.confidence))
                 }
                 txtOutput.text = sb.toString()
             }
@@ -152,11 +152,11 @@ class MainActivity : AppCompatActivity() {
                 val bmp = assetsToBitmap("test_set/${t.file}") ?: return@forEachIndexed
                 classify(bmp) { labels ->
                     val top = labels.maxBy { it.confidence }
-                    val ok = top.text == t.trueLabel
+                    val ok = top.text.trim() == t.trueLabel
                     if (ok) correct++
-                    if (top.text == t.nbPred) agree++
+                    if (top.text.trim() == t.nbPred) agree++
                     lines[i] = String.format(Locale.US, "%s %s · true: %s\n      phone: %s (%.2f) · notebook: %s (%.2f)",
-                        mark(ok), t.file.removeSuffix(".jpg"), t.trueLabel, top.text, top.confidence, t.nbPred, t.nbConf)
+                        mark(ok), t.file.removeSuffix(".jpg"), t.trueLabel, top.text.trim(), top.confidence, t.nbPred, t.nbConf)
                     done++
                     if (done == n) {
                         txtSummary.text = String.format(Locale.US,
